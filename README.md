@@ -1,5 +1,7 @@
 ## Nome: `Daiane Deponti Bolzan`
 
+GitHub do projeto: https://github.com/Daaaiii/reading_journal_react
+
 Para executar este projeto:
 
 1. Entre na pasta do projeto no terminal:
