@@ -1,0 +1,32 @@
+form {
+  display: grid;
+  gap: 10px;
+  max-width: 600px;
+  width: 100%;
+  margin: 30px auto;
+  padding: 20px;
+  background-color: var(--background-light);
+  border-radius: 10px;
+  box-shadow: 0 4px 8px var(--shadow);
+}
+
+label {
+  font-size: 16px;
+  color: var(--text-primary);
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+input {
+  padding: 10px 0;
+  font-size: 16px;
+  border-radius: 10px;
+  width: 100%;
+  border: 1px solid var(--background-light);
+}
+
+input:focus {
+  border-color: var(--text-primary);
+  outline: none;
+  background-color: var(--secondary-color);
+}

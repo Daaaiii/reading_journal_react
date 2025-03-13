@@ -1,0 +1,33 @@
+ul {
+  max-width: 1000px;
+  margin: 20px auto;
+  padding: 0;
+}
+
+li.booklist {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 10px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.actions {
+  display: flex;
+  gap: 20px;
+}
+
+li:hover {
+  box-shadow: 0 4px 8px var(--shadow);
+}
+
+.actions button,
+.actions a {
+  width: 150px;
+  border-radius: 4px;
+  font-size: 14px;
+}

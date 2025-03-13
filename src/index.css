@@ -1,0 +1,111 @@
+:root {
+  --primary-color: #9b59b6; /* Roxo Claro */
+  --secondary-color: #d2a9ff; /* Lavanda */
+  --background-light: #ecf0f1; /* Fundo claro */
+  --background-dark: #8e44ad; /* Roxo Escuro */
+  --text-primary: #4a148c; /* Texto principal (roxo escuro) */
+  --text-secondary: #b2b2b2; /* Texto secundário (cinza claro) */
+  --button-primary: #9c7fea; /* Botão (lilás médio) */
+  --button-hover: #a569bd; /* Hover do botão (roxo claro) */
+  --shadow: rgba(0, 0, 0, 0.1);
+}
+/* Reset CSS */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+ul,
+li,
+button,
+a {
+  margin: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  list-style: none;
+  text-decoration: none;
+  background: none;
+}
+
+html {
+  font-family: "Arial", sans-serif;
+  background-color: var(--background-light);
+  color: var(--text-primary);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: var(--text-primary);
+}
+
+h1 {
+  font-size: 36px;
+  font-weight: 600;
+  margin: 50px;
+}
+
+p {
+  font-size: 18px;
+  margin: 20px;
+}
+
+button,
+a {
+  background-color: var(--button-primary);
+  color: var(--background-light);
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s ease;
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+button:hover,
+a:hover {
+  background-color: var(--button-hover);
+}
+
+button:focus {
+  outline: none;
+}
+
+nav {
+  width: 100%;
+}
+
+.navbar a {
+  background-color: var(--primary-color);
+  color: var(--background-light);
+  padding: 15px 20px;
+}
+
+.navbar a:hover {
+  color: var(--text-primary);
+}
+
+.navbar a.active {
+  color: var(--secondary-color);
+}
+
+div {
+  text-align: center;
+}
