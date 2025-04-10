@@ -85,7 +85,7 @@ router.delete("/:id", (req, res) => {
 });
 
 // Rota PUT para atualizar um livro
-router.put("/", (req, res) => {
+router.put("/:id", (req, res) => {
   fs.readFile(filePath, "utf8", (err, data) => {
     if (err) {
       console.error(err);
@@ -111,7 +111,7 @@ router.put("/", (req, res) => {
               .json({ error: "Erro ao escrever arquivo JSON" });
           }
 
-          res.json(updatedBook); // Retorna o livro atualizado como resposta
+         res.json(updatedBook); // Retorna o livro atualizado como resposta
         });
       } else {
         return res.status(404).json({ error: "Book not found" });

@@ -1,113 +1,131 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { BrowserRouter, MemoryRouter } from "react-router-dom";
+import { BrowserRouter, MemoryRouter, Routes, Route } from "react-router-dom";
 import BookForm from "./BookForm";
 import { jest } from "@jest/globals";
+const renderComRoteador = (ui, { rota = "/" } = {}) => {
+  window.history.pushState({}, "Página de teste", rota);
+  return render(ui, { wrapper: BrowserRouter });
+};
 
+describe("Componente BookForm", () => {
+  const mockAdicionarLivro = jest.fn();
+  const mockEditarLivro = jest.fn();
+  const livrosMock = [
+    {
+      id: 1,
+      title: "Livro Teste",
+      author: "Autor 1",
+      genre: "Gênero 1",
+      year: "2020",
+      readAt: "2021-01-01",
+    },
+  ];
 
-const mockAddBook = jest.fn();
-const mockEditBook = jest.fn();
-
-const books = [
-  { id: 99, title: "Book 1", author: "Author 1", genre: "Fiction", year: "2021", readAt: "2022-01-01" },
-];
-
-describe("BookForm", () => {
-  test("deve renderizar o formulário com os campos vazios para adicionar um livro", () => {
-    render(
-      <BrowserRouter>
-        <BookForm addBook={mockAddBook} editBook={mockEditBook} books={[]} />
-      </BrowserRouter>
-    );
-
-    expect(screen.getByLabelText(/Title:/)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Author:/)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Genre:/)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Year:/)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Read:/)).toBeInTheDocument();
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
-  test("deve renderizar o formulário com os dados do livro existente quando editando", async () => {
+  test("renderiza o formulário de adição de livro", () => {
+    renderComRoteador(
+      <BookForm addBook={mockAdicionarLivro} editBook={mockEditarLivro} books={[]} />
+    );
 
+    expect(screen.getByText("Add New Book")).toBeInTheDocument();
+    expect(screen.getByLabelText(/Title:/i)).toBeInTheDocument();
+  });
+
+  test("envia o formulário e chama a função addBook", () => {
+    renderComRoteador(
+      <BookForm addBook={mockAdicionarLivro} editBook={mockEditarLivro} books={[]} />
+    );
+
+    // Preenche os campos
+    fireEvent.change(screen.getByLabelText(/Title:/i), {
+      target: { value: "Novo Livro", name: "title" },
+    });
+    fireEvent.change(screen.getByLabelText(/Author:/i), {
+      target: { value: "Joana Silva", name: "author" },
+    });
+    fireEvent.change(screen.getByLabelText(/Genre:/i), {
+      target: { value: "Romance", name: "genre" },
+    });
+    fireEvent.change(screen.getByLabelText(/Year:/i), {
+      target: { value: "2022", name: "year" },
+    });
+    fireEvent.change(screen.getByLabelText(/Read:/i), {
+      target: { value: "2023-01-01", name: "readAt" },
+    });
+
+    // Clica no botão de envio
+    fireEvent.click(screen.getByRole("button", { name: /Add Book/i }));
+
+    // Verifica se a função foi chamada corretamente
+    expect(mockAdicionarLivro).toHaveBeenCalledWith({
+      title: "Novo Livro",
+      author: "Joana Silva",
+      genre: "Romance",
+      year: "2022",
+      readAt: "2023-01-01",
+    });
+  });
+
+  test("renderiza o formulário de edição quando há ID na URL", () => {
     render(
-      <MemoryRouter initialEntries={["/edit-book/99"]}>
-        <BookForm books={books} editBook={jest.fn()} />
+      <MemoryRouter initialEntries={["/edit-book/1"]}>
+        <Routes>
+          <Route
+            path="/edit-book/:id"
+            element={
+              <BookForm
+                addBook={mockAdicionarLivro}
+                editBook={mockEditarLivro}
+                books={livrosMock}
+              />
+            }
+          />
+        </Routes>
       </MemoryRouter>
     );
-  
-    expect(screen.getByLabelText(/Title:/)).toHaveValue("Book 1");
-    expect(screen.getByLabelText(/Author:/)).toHaveValue("Author 1");
-    expect(screen.getByLabelText(/Genre:/)).toHaveValue("Fiction");
-    expect(screen.getByLabelText(/Year:/)).toHaveValue("2021");
-    expect(screen.getByLabelText(/Read:/)).toHaveValue("2022-01-01");
 
+    expect(screen.getByDisplayValue("Livro Teste")).toBeInTheDocument();
+    expect(screen.getByText("Edit Book")).toBeInTheDocument();
   });
-  test("deve chamar a função addBook ao submeter o formulário para adicionar um livro", async () => {
+
+  test("chama a função editBook ao enviar o formulário de edição", () => {
     render(
-      <BrowserRouter>
-        <BookForm addBook={mockAddBook} editBook={mockEditBook} books={[]} />
-      </BrowserRouter>
+      <MemoryRouter initialEntries={["/edit-book/1"]}>
+        <Routes>
+          <Route
+            path="/edit-book/:id"
+            element={
+              <BookForm
+                addBook={mockAdicionarLivro}
+                editBook={mockEditarLivro}
+                books={livrosMock}
+              />
+            }
+          />
+        </Routes>
+      </MemoryRouter>
     );
 
-    fireEvent.change(screen.getByLabelText(/Title:/), { target: { value: "New Book" } });
-    fireEvent.change(screen.getByLabelText(/Author:/), { target: { value: "New Author" } });
-    fireEvent.change(screen.getByLabelText(/Genre:/), { target: { value: "Fantasy" } });
-    fireEvent.change(screen.getByLabelText(/Year:/), { target: { value: "2023" } });
-    fireEvent.change(screen.getByLabelText(/Read:/), { target: { value: "2023-03-01" } });
-
-    fireEvent.click(screen.getByLabelText(/Add Book/));
-
-    await waitFor(() => expect(mockAddBook).toHaveBeenCalledTimes(1));
-    expect(mockAddBook).toHaveBeenCalledWith({
-      title: "New Book",
-      author: "New Author",
-      genre: "Fantasy",
-      year: "2023",
-      readAt: "2023-03-01",
+    // Altera o título
+    fireEvent.change(screen.getByLabelText(/Title:/i), {
+      target: { value: "Livro Atualizado", name: "title" },
     });
-  });
 
-  test("deve chamar a função editBook ao submeter o formulário para editar um livro", async () => {
-    render(
-      <BrowserRouter>
-        <BookForm addBook={mockAddBook} editBook={mockEditBook} books={books} />
-      </BrowserRouter>
-    );
+    // Envia o formulário
+    fireEvent.click(screen.getByRole("button", { name: /Update Book/i }));
 
-    fireEvent.change(screen.getByLabelText(/Title:/), { target: { value: "Updated Book" } });
-    fireEvent.change(screen.getByLabelText(/Author:/), { target: { value: "Updated Author" } });
-    fireEvent.change(screen.getByLabelText(/Genre:/), { target: { value: "Science Fiction" } });
-    fireEvent.change(screen.getByLabelText(/Year:/), { target: { value: "2024" } });
-    fireEvent.change(screen.getByLabelText(/Read:/), { target: { value: "2024-02-01" } });
-
-    fireEvent.click(screen.getByLabelText(/Update Book/));
-
-    await waitFor(() => expect(mockEditBook).toHaveBeenCalledTimes(1));
-    expect(mockEditBook).toHaveBeenCalledWith({
+    // Verifica se editBook foi chamado com os dados atualizados
+    expect(mockEditarLivro).toHaveBeenCalledWith({
       id: 1,
-      title: "Updated Book",
-      author: "Updated Author",
-      genre: "Science Fiction",
-      year: "2024",
-      readAt: "2024-02-01",
+      title: "Livro Atualizado",
+      author: "Autor 1",
+      genre: "Gênero 1",
+      year: "2020",
+      readAt: "2021-01-01",
     });
-  });
-
-  test("deve renderizar o título 'Add New Book' quando não houver id na URL", () => {
-    render(
-      <BrowserRouter>
-        <BookForm addBook={mockAddBook} editBook={mockEditBook} books={[]} />
-      </BrowserRouter>
-    );
-    expect(screen.getByText(/Add New Book/)).toBeInTheDocument();
-  });
-
-  test("deve renderizar o título 'Edit Book' quando houver id na URL", () => {
-    render(
-      <BrowserRouter>
-        <BookForm addBook={mockAddBook} editBook={mockEditBook} books={books} />
-      </BrowserRouter>
-    );
-    expect(screen.getByText(/Edit Book/)).toBeInTheDocument();
   });
 });

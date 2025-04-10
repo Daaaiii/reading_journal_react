@@ -1,28 +1,44 @@
 import React from "react";
-import { render, screen} from "@testing-library/react";
-import { BrowserRouter } from "react-router-dom";
+import { render, screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import NavBar from "./NavBar";
 
+describe("Componente NavBar", () => {
+  beforeEach(() => {
+    render(
+      <MemoryRouter>
+        <NavBar />
+      </MemoryRouter>
+    );
+  });
 
-it("deve renderizar a navbar com o título 'Book Manager'", () => {
-  render(
-    <BrowserRouter>
-      <NavBar />
-    </BrowserRouter>
-  );
+  test("renderiza o título 'Book Manager'", () => {
+    const titulo = screen.getByText("Book Manager");
+    expect(titulo).toBeInTheDocument();
+    expect(titulo.closest("a")).toHaveAttribute("href", "/");
+  });
 
-  expect(screen.getByText("Book Manager")).toBeInTheDocument();
-});
+  test("renderiza o link 'Home' com a rota correta", () => {
+    const linkHome = screen.getByText("Home");
+    expect(linkHome).toBeInTheDocument();
+    expect(linkHome.closest("a")).toHaveAttribute("href", "/");
+  });
 
-it("deve conter links para Home, Books, Add Book e About", () => {
-  render(
-    <BrowserRouter>
-      <NavBar />
-    </BrowserRouter>
-  );
+  test("renderiza o link 'Books' com a rota correta", () => {
+    const linkBooks = screen.getByText("Books");
+    expect(linkBooks).toBeInTheDocument();
+    expect(linkBooks.closest("a")).toHaveAttribute("href", "/books");
+  });
 
-  expect(screen.getByText("Home")).toBeInTheDocument();
-  expect(screen.getByText("Books")).toBeInTheDocument();
-  expect(screen.getByText("Add Book")).toBeInTheDocument();
-  expect(screen.getByText("About")).toBeInTheDocument();
+  test("renderiza o link 'Add Book' com a rota correta", () => {
+    const linkAdd = screen.getByText("Add Book");
+    expect(linkAdd).toBeInTheDocument();
+    expect(linkAdd.closest("a")).toHaveAttribute("href", "/add-book");
+  });
+
+  test("renderiza o link 'About' com a rota correta", () => {
+    const linkAbout = screen.getByText("About");
+    expect(linkAbout).toBeInTheDocument();
+    expect(linkAbout.closest("a")).toHaveAttribute("href", "/about");
+  });
 });
